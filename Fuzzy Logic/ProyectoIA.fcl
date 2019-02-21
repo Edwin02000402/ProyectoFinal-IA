@@ -1,0 +1,37 @@
+FUNCTION_BLOCK sistema_movimiento
+
+VAR_INPUT
+    valor_sensor:REAL;
+END_VAR
+
+VAR_OUTPUT
+    movimiento:REAL;
+END_VAR
+
+FUZZIFY valor_sensor
+    TERM cerca := TRAPE 4 6 8 10;
+    TERM medio:= TRAPE 9 11 13 15;
+    TERM lejos:= TRAPE 14 16 18 20;
+END_FUZZIFY
+
+
+DEFUZZIFY movimiento
+	TERM recto:= TRAPE 2 4 6 8;
+    TERM derecha:=GAUSS 9 2;
+    TERM izquierda:=GAUSS 10 2;
+    METHOD:COG;
+    DEFAULT:=0;
+END_DEFUZZIFY
+
+RULEBLOCK Reglas1
+    ACT: MIN;
+    AND: MIN;
+    ACCU: MAX;
+    
+    RULE 1: IF valor_sensor IS cerca THEN movimiento IS derecha;
+    RULE 2: IF valor_sensor IS medio THEN movimiento IS izquierda;
+    RULE 3: IF valor_sensor IS lejos THEN movimiento IS recto;
+    
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
